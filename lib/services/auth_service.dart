@@ -7,26 +7,27 @@ import 'package:flutter_chat/models/usuario.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService with ChangeNotifier {
-  final storage = new FlutterSecureStorage();
+  final _storage = new FlutterSecureStorage();
 
   Usuario usuario;
   bool _autenticando = false;
 
   bool get autenticando => this._autenticando;
+
   set autenticando(bool valor) {
     this._autenticando = valor;
   }
 
   //getters del token estaticos
   static Future<String> getToken() async {
-    final storage = new FlutterSecureStorage();
-    final token = await storage.read(key: "token");
+    final _storage = new FlutterSecureStorage();
+    final token = await _storage.read(key: "token");
     return token;
   }
 
   static Future<void> deleteToken() async {
-    final storage = new FlutterSecureStorage();
-    await storage.delete(key: "token");
+    final _storage = new FlutterSecureStorage();
+    await _storage.delete(key: "token");
   }
 
 //login
@@ -66,7 +67,7 @@ class AuthService with ChangeNotifier {
       "password": password,
     };
     final resp = await http.post(
-      Uri.parse("${Environment.apiUrl}/new"),
+      Uri.parse("${Environment.apiUrl}/login/new"),
       body: jsonEncode(data),
       headers: {"Content-Type": "application/json"},
     );
@@ -88,7 +89,7 @@ class AuthService with ChangeNotifier {
 
 //is logged
   Future<bool> isLoggedIn() async {
-    final token = await this.storage.read(key: "token");
+    final token = await this._storage.read(key: "token");
 
     final resp = await http.get(
       Uri.parse("${Environment.apiUrl}/login/renew"),
@@ -111,14 +112,14 @@ class AuthService with ChangeNotifier {
   }
 
   Future _guardarToken(String token) async {
-    return await storage.write(
+    return await _storage.write(
       key: "token",
       value: token,
     );
   }
 
   Future logOut() async {
-    await storage.delete(
+    await _storage.delete(
       key: "token",
     );
   }
