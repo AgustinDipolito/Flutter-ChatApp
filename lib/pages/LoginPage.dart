@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/helpers/mostrar_alerta.dart';
+import 'package:flutter_chat/services/auth_service.dart';
 import 'package:flutter_chat/widgets/botonLogin.dart';
 import 'package:flutter_chat/widgets/custom_input.dart';
 import 'package:flutter_chat/widgets/logo.dart';
 import 'package:flutter_chat/widgets/labels.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -46,6 +49,8 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+
     return Container(
       margin: EdgeInsets.only(top: 40),
       padding: EdgeInsets.symmetric(horizontal: 50),
@@ -66,7 +71,23 @@ class __FormState extends State<_Form> {
           ),
           BotonLogin(
             text: "Login",
-            onPressed: () {},
+            onPressed: authService.autenticando
+                ? null
+                : () async {
+                    FocusScope.of(context).unfocus();
+                    final loginOk =
+                        await authService.login(emailCtrl.text, passCtrl.text);
+
+                    if (loginOk) {
+                      Navigator.pushReplacementNamed(context, "usuarios");
+                    } else {
+                      mostrarAlerta(
+                        context,
+                        "Login Fail",
+                        " Error on email or password",
+                      );
+                    }
+                  },
           ),
         ],
       ),

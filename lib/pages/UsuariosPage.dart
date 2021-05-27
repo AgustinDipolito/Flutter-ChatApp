@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/models/usuario.dart';
+import 'package:flutter_chat/services/auth_service.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class UsuariosPage extends StatefulWidget {
@@ -12,16 +14,20 @@ class _UsuariosPageState extends State<UsuariosPage> {
       RefreshController(initialRefresh: false);
 
   final usuarios = [
-    Usuario(name: "cr1", email: "cr7gmail.com", uid: "1", online: true),
-    Usuario(name: "cr6", email: "cr6gmail.com", uid: "6", online: true),
-    Usuario(name: "cr8", email: "cr8gmail.com", uid: "8", online: false),
+    Usuario(nombre: "cr1", email: "cr7gmail.com", uid: "1", online: true),
+    Usuario(nombre: "cr6", email: "cr6gmail.com", uid: "6", online: true),
+    Usuario(nombre: "cr8", email: "cr8gmail.com", uid: "8", online: false),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final usuario = authService.usuario;
     return Scaffold(
         appBar: AppBar(
-          title: Text("name"),
+          title: Text(
+            usuario.nombre,
+          ),
           elevation: 1,
           backgroundColor: Colors.white,
           leading: IconButton(
@@ -29,7 +35,10 @@ class _UsuariosPageState extends State<UsuariosPage> {
               Icons.exit_to_app,
               color: Colors.blue[700],
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, "login");
+              AuthService.deleteToken();
+            },
           ),
           actions: <Widget>[
             Container(
@@ -64,12 +73,12 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   ListTile _usuarioListTile(Usuario usuario) {
     return ListTile(
-      title: Text(usuario.name),
+      title: Text(usuario.nombre),
       subtitle: Text(usuario.email),
       leading: CircleAvatar(
         backgroundColor: Colors.indigo[50],
         child: Text(
-          usuario.name.substring(0, 2),
+          usuario.nombre.substring(0, 2),
         ),
       ),
       trailing: Container(
