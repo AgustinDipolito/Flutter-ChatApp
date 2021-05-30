@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/helpers/mostrar_alerta.dart';
 import 'package:flutter_chat/services/auth_service.dart';
+import 'package:flutter_chat/services/socket_services.dart';
 import 'package:flutter_chat/widgets/botonLogin.dart';
 import 'package:flutter_chat/widgets/custom_input.dart';
 import 'package:flutter_chat/widgets/logo.dart';
@@ -76,12 +77,14 @@ class __FormState extends State<_Form> {
             icon: Icons.lock,
             placeHolder: "Password",
             isPassword: true,
+            keyboardType: TextInputType.visiblePassword,
             textController: passCtrl,
           ),
           CustomInput(
             icon: Icons.lock,
             placeHolder: "Repeat password",
             isPassword: true,
+            keyboardType: TextInputType.visiblePassword,
             textController: repPassCtrl,
           ),
           BotonLogin(
@@ -96,6 +99,11 @@ class __FormState extends State<_Form> {
                           repPassCtrl.text,
                         );
                         if (regristroOk == true) {
+                          final socketService = Provider.of<SocketServices>(
+                            context,
+                            listen: false,
+                          );
+                          socketService.connect();
                           Navigator.pushReplacementNamed(context, "usuarios");
                         } else {
                           mostrarAlerta(

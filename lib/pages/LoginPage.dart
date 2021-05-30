@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/helpers/mostrar_alerta.dart';
 import 'package:flutter_chat/services/auth_service.dart';
+import 'package:flutter_chat/services/socket_services.dart';
 import 'package:flutter_chat/widgets/botonLogin.dart';
 import 'package:flutter_chat/widgets/custom_input.dart';
 import 'package:flutter_chat/widgets/logo.dart';
@@ -50,6 +51,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
+    final socketService = Provider.of<SocketServices>(context);
 
     return Container(
       margin: EdgeInsets.only(top: 40),
@@ -75,10 +77,13 @@ class __FormState extends State<_Form> {
                 ? null
                 : () async {
                     FocusScope.of(context).unfocus();
-                    final loginOk =
-                        await authService.login(emailCtrl.text, passCtrl.text);
+                    final loginOk = await authService.login(
+                      emailCtrl.text.trim(),
+                      passCtrl.text.trim(),
+                    );
 
                     if (loginOk) {
+                      socketService.connect();
                       Navigator.pushReplacementNamed(context, "usuarios");
                     } else {
                       mostrarAlerta(
