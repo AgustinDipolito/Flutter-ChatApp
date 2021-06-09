@@ -1,4 +1,5 @@
 import 'package:flutter_chat/global/environment.dart';
+import 'package:flutter_chat/services/auth_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'package:flutter/material.dart';
@@ -14,16 +15,20 @@ class SocketServices with ChangeNotifier {
 
   Function get emit => this._socket.emit;
 
-  void connect() {
+  void connect() async {
+    final token = await AuthService.getToken();
+
     this._socket = IO.io(
-      Environment.socketUrl,
-      IO.OptionBuilder()
-          .setTransports(["websocket"])
-          .enableForceNew()
-          .enableAutoConnect()
-          .setExtraHeaders({"foo": "bar"})
-          .build(),
-    );
+        Environment.socketUrl,
+        IO.OptionBuilder()
+            .setTransports(["websocket"])
+            .enableForceNew()
+            .enableAutoConnect()
+            .setExtraHeaders({
+              "foo": "bar",
+              "x-token": token,
+            })
+            .build());
     this._socket.connect();
 
     this._socket.onConnect(
@@ -41,8 +46,7 @@ class SocketServices with ChangeNotifier {
         notifyListeners();
       },
     );
-
-    this._socket.on("nuevo-msj", (payload) => {print(payload)});
+    print("$_serverStatus");
   }
 
   void disconnect() {

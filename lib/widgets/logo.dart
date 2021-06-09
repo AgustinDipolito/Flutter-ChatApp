@@ -14,6 +14,9 @@ class Logo extends StatelessWidget {
       child: Container(
         child: Column(
           children: <Widget>[
+            SizedBox(
+              height: 20,
+            ),
             Icon(
               Icons.mail_outline_rounded,
               size: 100,

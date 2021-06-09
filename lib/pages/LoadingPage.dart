@@ -9,12 +9,26 @@ class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo[50],
       body: FutureBuilder(
         future: checkLoginState(context),
         builder: (context, snapshot) {
           return Center(
-            child: CircularProgressIndicator(),
-            // child: Text('Loading...'),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(),
+                SizedBox(height: 8),
+                Text(
+                  "Connecting...",
+                  style: TextStyle(
+                    color: Colors.blue[600],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                )
+              ],
+            ),
           );
         },
       ),
